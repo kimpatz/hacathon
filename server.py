@@ -1,1 +1,1 @@
-fuck dor
+fuck oz
