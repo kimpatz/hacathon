@@ -17,9 +17,9 @@ UDP_PORT = 13117
 BUFF_SIZE = 2<<10
 FORMAT = 'utf-8'
 SERVER_PORT = 2088 # our port from shets
-SERVER_IP = 
+#SERVER_IP = 
 
-def mathP ():
+def mathProb ():
     q = ["0+1","0+2","1+3","1+2","8+1","1+4","5+3","1+5","6+3","7+2","3+3","4+5","5+2", "0+0"]
     a = ["1","2","4","3","9","5","8","6","9","9","6","9","7","0"]
     return q,a
@@ -51,8 +51,12 @@ class Server:
         server_UDP_socket.bind(('',UDP_PORT)) # bind socket to udp-port
         
         # send the offer messages
-
-
+      
+       # while not s_threads:
+        #    time.sleep(1)
+         #   if not s_threads:
+          #      server_UDP_socket.sendto(message, ("255.255.255.255", UDP_PORT))
+       # server_UDP_socket.close()
 
     def server_up (self,first_time_run):
 
