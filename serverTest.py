@@ -7,8 +7,8 @@ import time
 #globalandmybechange
 is_our_network = True
 first_time_run = True
-clients = 0
-number_Win_Team = 0
+num_Of_conected_Clients = 0
+number_Of_Win_Team = 0
 
 # const & magic numbers
 HEADER = 0xabcddcba
@@ -18,6 +18,7 @@ BUFF_SIZE = 2<<10 # 2^10 is size of buffer
 FORMAT = 'utf-8'
 SERVER_PORT = 2088 # our port from shets
 #SERVER_IP = 
+BROADCASTIP = "255.255.255.255"
 
 
 class Server:
@@ -29,32 +30,42 @@ class Server:
             self.ip = scapy.all.get_if_addr('eth2')
 
 
-    def up_udp (self, first_time_run, socketPortTcp):
-        #UDP message according to the format
-        message = struct.pack("IbH",HEADER,MESSAGETYPE,SERVER_PORT)
 
+    def up_udp (self, first_time_run, message):
         #print message by the time 
         if first_time_run:
             print("Server started, listening on IP address" + self.ip)
         else :
              print("Game over, sending out offer requests...")
 
-             
         serverSocketUdp = socket(AF_INET, SOCK_DGRAM)
         serverSocketUdp.setsockopt(SOL_SOCKET,SO_REUSEADDR,1) #forcing to talk
         serverSocketUdp.setsockopt(SOL_SOCKET,SO_BROADCAST,1) # open socket for broadcast 
         serverSocketUdp.bind(('',UDP_PORT)) # bind socket to udp-port
         
         # send the offer messages every sec
-        while clients < 2:
-            serverSocketUdp.sendto(message, ("255.255.255.255", UDP_PORT))
+        while num_Of_conected_Clients < 2:
+            serverSocketUdp.sendto(message, (BROADCASTIP, UDP_PORT))
             time.sleep(1) 
         serverSocketUdp.close()   
         
 
-    def server_up (self,first_time_run):
+    def up_Server (self,first_time_run):
+
+        #open TCP SOCKET connection
         serverSocketTcp = socket.socket(AF_INET, SOCK_STREAM)
         serverSocketTcp.bind(('', 0))
+        serverSocketTcpPort = (serverSocketTcp.getsockname())[1]
+
+        #reset num of connected clients
+        num_Of_conected_Clients = 0
+        0
+        #UDP message according to the format
+        message = struct.pack("IbH",HEADER,MESSAGETYPE,serverSocketTcpPort)
+        #start threding udp
+        threadUDP = threading.Thread(target=self.up_udp, args=(first_time_run , message))
+        threadUDP.start()
+
 
 
 
