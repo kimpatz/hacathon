@@ -37,7 +37,8 @@ class Client:
     def connect_to_TCP(self,address):
         client_tcp_socket=socket(AF_INET, SOCK_STREAM)
         client_tcp_socket.connect((address[0],address[1]))
-        client_tcp_socket.send(bytes(self.group_name+"\n", "utf-8"))
+        print ("lidor hagever")
+        client_tcp_socket.send(str.encode(team_name))
         while True:
             message = client_tcp_socket.recv(BUFF_SIZE)
             print(message.decode('utf-8'))

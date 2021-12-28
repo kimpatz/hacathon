@@ -1,7 +1,6 @@
 from socket import * 
 import threading
 import struct
-import scapy.all
 import time
 
 #globalandmybechange
@@ -78,6 +77,7 @@ class Server:
         try:
              name = clientsocket.recv(BUFF_SIZE).decode("utf-8")
               # self.clients[clientsocket] = name
+             print(name)
              if (num_Of_conected_Clients != 2):
                   threading.Event().wait()
                   qustion, answer = mathProb()
