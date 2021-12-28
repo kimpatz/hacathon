@@ -7,22 +7,17 @@ import time
 #globalandmybechange
 is_our_network = True
 first_time_run = True
-
-
+clients = 0
+number_Win_Team = 0
 
 # const & magic numbers
 HEADER = 0xabcddcba
 MESSAGETYPE = 0x2
 UDP_PORT = 13117
-BUFF_SIZE = 2<<10
+BUFF_SIZE = 2<<10 # 2^10 is size of buffer
 FORMAT = 'utf-8'
 SERVER_PORT = 2088 # our port from shets
 #SERVER_IP = 
-
-def mathProb ():
-    q = ["0+1","0+2","1+3","1+2","8+1","1+4","5+3","1+5","6+3","7+2","3+3","4+5","5+2", "0+0"]
-    a = ["1","2","4","3","9","5","8","6","9","9","6","9","7","0"]
-    return q,a
 
 
 class Server:
@@ -40,25 +35,36 @@ class Server:
 
         #print message by the time 
         if first_time_run:
-            print('Server started, listening on IP address {ip}'.format(ip=self.ip))
+            print("Server started, listening on IP address" + self.ip)
         else :
              print("Game over, sending out offer requests...")
 
              
-        server_UDP_socket = socket(AF_INET, SOCK_DGRAM)
-        server_UDP_socket.setsockopt(SOL_SOCKET,SO_REUSEADDR,1) #forcing to talk
-        server_UDP_socket.setsockopt(SOL_SOCKET,SO_BROADCAST,1) # open socket for broadcast 
-        server_UDP_socket.bind(('',UDP_PORT)) # bind socket to udp-port
+        serverSocketUdp = socket(AF_INET, SOCK_DGRAM)
+        serverSocketUdp.setsockopt(SOL_SOCKET,SO_REUSEADDR,1) #forcing to talk
+        serverSocketUdp.setsockopt(SOL_SOCKET,SO_BROADCAST,1) # open socket for broadcast 
+        serverSocketUdp.bind(('',UDP_PORT)) # bind socket to udp-port
         
-        # send the offer messages
-      
-       # while not s_threads:
-        #    time.sleep(1)
-         #   if not s_threads:
-          #      server_UDP_socket.sendto(message, ("255.255.255.255", UDP_PORT))
-       # server_UDP_socket.close()
+        # send the offer messages every sec
+        while clients < 2:
+            serverSocketUdp.sendto(message, ("255.255.255.255", UDP_PORT))
+            time.sleep(1) 
+        serverSocketUdp.close()   
+        
 
     def server_up (self,first_time_run):
+        serverSocketTcp = socket.socket(AF_INET, SOCK_STREAM)
+        serverSocketTcp.bind(('', 0))
+
+
+
+
+def mathProb ():
+    q = ["0+1","0+2","1+3","1+2","8+1","1+4","5+3","1+5","6+3","7+2","3+3","4+5","5+2", "0+0",
+        "6-2","8-3","9-2"]
+    a = ["1","2","4","3","9","5","8","6","9","9","6","9","7","0","4","5","7"]
+    return q,a
+
 
 if __name__ == "__main__":
     first_time_run = True
