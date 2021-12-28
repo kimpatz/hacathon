@@ -4,6 +4,8 @@ import keyboard
 import sys
 import select
 
+from serverTest import FORMAT
+
 HEADER = 0xabcddcba
 MESSAGETYPE = 0x2
 UDP_PORT = 13117
@@ -37,13 +39,12 @@ class Client:
     def connect_to_TCP(self,address):
         client_tcp_socket=socket(AF_INET, SOCK_STREAM)
         client_tcp_socket.connect((address[0],address[1]))
-        print ("lidor hagever")
         client_tcp_socket.send(str.encode(team_name))
         while True:
             message = client_tcp_socket.recv(BUFF_SIZE)
-            print(message.decode('utf-8'))
+            print(message.decode(FORMAT))
             my_answer = keyboard.read_key()
-            client_tcp_socket.send(bytes(my_answer + "\n", "utf-8"))
+            client_tcp_socket.send(str.ecnode(my_answer))
 
 
 

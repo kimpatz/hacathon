@@ -75,7 +75,7 @@ class Server:
          
     def new_client_socket(self, clientsocket, ip):
         try:
-             name = clientsocket.recv(BUFF_SIZE).decode("utf-8")
+             name = clientsocket.recv(BUFF_SIZE).decode(FORMAT)
               # self.clients[clientsocket] = name
              print(name)
              if (num_Of_conected_Clients != 2):
