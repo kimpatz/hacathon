@@ -24,12 +24,12 @@ BROADCASTIP = "255.255.255.255"
 class Server:
 
     def __init__ (self):
-        if is_our_network:
-            self.ip = scapy.all.get_if_addr('eth1')
-        else :
-            self.ip = scapy.all.get_if_addr('eth2')
+        #   if is_our_network:
+        #    self.ip = scapy.all.get_if_addr('eth1')
+        #else :
+         #   self.ip = scapy.all.get_if_addr('eth2')
         self.clientList = {}
-
+        self.ip = "127.0.0.1"
 
 
     def up_udp (self, first_time_run, message):
@@ -54,7 +54,7 @@ class Server:
     def up_Server (self,first_time_run):
 
         #open TCP SOCKET connection
-        serverSocketTcp = socket.socket(AF_INET, SOCK_STREAM)
+        serverSocketTcp = socket(AF_INET, SOCK_STREAM)
         serverSocketTcp.bind(('', 0))
         serverSocketTcpPort = (serverSocketTcp.getsockname())[1]
 
@@ -67,7 +67,7 @@ class Server:
         threadUDP = threading.Thread(target=self.up_udp, args=(first_time_run , message))
         threadUDP.start()
 
-        serverSocketTcpPort.listen(2)
+        serverSocketTcp.listen(2)
         while num_Of_conected_Clients < 2:
             clientSoc ,ip = serverSocketTcp.accept()
             print("sucss connect to tcp") #todo maybe sync
@@ -101,5 +101,5 @@ if __name__ == "__main__":
     first_time_run = True
     s = Server()
     while True:
-        s.server_up(first_time_run)
+        s.up_Server(first_time_run)
         first_time_run = False

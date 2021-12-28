@@ -11,13 +11,15 @@ BUFF_SIZE = 2<<10
 team_name = "Desperate Programming Apes"
 
 class Client:
-
+    
+    def __init__ (self):
+        self.connection_to_UPD()
   
 
     def connection_to_UPD(self):
-        clientSocketUDP = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        clientSocketUDP.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        clientSocketUDP.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        clientSocketUDP = socket(AF_INET, SOCK_DGRAM)
+        clientSocketUDP.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        clientSocketUDP.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
         print("Client started, listening for offer requests...")
         clientSocketUDP.bind(("", UDP_PORT))
         self.serverConUDP(clientSocketUDP)
@@ -33,7 +35,7 @@ class Client:
 
 
     def connect_to_TCP(self,address):
-        client_tcp_socket=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_tcp_socket=socket(AF_INET, SOCK_STREAM)
         client_tcp_socket.connect((address[0],address[1]))
         client_tcp_socket.send(bytes(self.group_name+"\n", "utf-8"))
         while True:
