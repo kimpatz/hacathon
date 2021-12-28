@@ -37,14 +37,14 @@ class Client:
 
 
     def connect_to_TCP(self,address):
-        client_tcp_socket=socket(AF_INET, SOCK_STREAM)
-        client_tcp_socket.connect((address[0],address[1]))
-        client_tcp_socket.send(str.encode(team_name))
+        clientSocketTCP=socket(AF_INET, SOCK_STREAM)
+        clientSocketTCP.connect((address[0],address[1]))
+        clientSocketTCP.send(str.encode(team_name))
         while True:
-            message = client_tcp_socket.recv(BUFF_SIZE)
+            message = clientSocketTCP.recv(BUFF_SIZE)
             print(message.decode(FORMAT))
-            my_answer = keyboard.read_key()
-            client_tcp_socket.send(str.ecnode(my_answer))
+            input = keyboard.read_key()
+            clientSocketTCP.send(str.ecnode(input))
 
 
 

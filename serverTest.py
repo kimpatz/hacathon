@@ -34,7 +34,7 @@ class Server:
     def up_udp (self, first_time_run, message):
         #print message by the time 
         if first_time_run:
-            print("Server started, listening on IP address" + self.ip)
+            print("Server started, listening on IP address " + self.ip)
         else :
              print("Game over, sending out offer requests...")
 
@@ -50,7 +50,7 @@ class Server:
         serverSocketUdp.close()   
         
 
-    def up_Server (self,first_time_run):
+    def server_connection (self,first_time_run):
 
         #open TCP SOCKET connection
         serverSocketTcp = socket(AF_INET, SOCK_STREAM)
@@ -69,7 +69,7 @@ class Server:
         serverSocketTcp.listen(2)
         while num_Of_conected_Clients < 2:
             clientSoc ,ip = serverSocketTcp.accept()
-            print("sucss connect to tcp") #todo maybe sync
+            print("Success connect to tcp") #todo maybe sync
             num_Of_conected_Clients +=1
             threading.Thread(target=self.new_client_socket,args=(clientSoc,ip)).start()
          
@@ -101,5 +101,5 @@ if __name__ == "__main__":
     first_time_run = True
     s = Server()
     while True:
-        s.up_Server(first_time_run)
+        s.server_connection(first_time_run)
         first_time_run = False
