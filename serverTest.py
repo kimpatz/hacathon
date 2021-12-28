@@ -28,6 +28,7 @@ class Server:
             self.ip = scapy.all.get_if_addr('eth1')
         else :
             self.ip = scapy.all.get_if_addr('eth2')
+        self.clientList = {}
 
 
 
@@ -59,13 +60,32 @@ class Server:
 
         #reset num of connected clients
         num_Of_conected_Clients = 0
-        0
+
         #UDP message according to the format
-        message = struct.pack("IbH",HEADER,MESSAGETYPE,serverSocketTcpPort)
+        message = struct.pack("IBH",HEADER,MESSAGETYPE,serverSocketTcpPort)
         #start threding udp
         threadUDP = threading.Thread(target=self.up_udp, args=(first_time_run , message))
         threadUDP.start()
 
+        serverSocketTcpPort.listen(2)
+        while num_Of_conected_Clients < 2:
+            clientSoc ,ip = serverSocketTcp.accept()
+            print("sucss connect to tcp") #todo maybe sync
+            num_Of_conected_Clients +=1
+            threading.Thread(target=self.new_client_socket,args=(clientSoc,ip)).start()
+         
+    def new_client_socket(self, clientsocket, ip):
+        try:
+             name = clientsocket.recv(BUFF_SIZE).decode("utf-8")
+              # self.clients[clientsocket] = name
+             if (num_Of_conected_Clients != 2):
+                  threading.Event().wait()
+                  qustion, answer = mathProb()
+             else:
+                  threading.Event().set()
+                  self.game(clientsocket)
+        except:
+             pass
 
 
 
@@ -79,6 +99,7 @@ def mathProb ():
 
 if __name__ == "__main__":
     first_time_run = True
+    s = Server()
     while True:
-        Server().server_up(first_time_run)
+        s.server_up(first_time_run)
         first_time_run = False
