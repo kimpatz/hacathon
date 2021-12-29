@@ -13,13 +13,12 @@ number_Of_Win_Team = 0
 # const & magic numbers
 HEADER = 0xabcddcba
 MESSAGETYPE = 0x2
-UDP_PORT = 13117
+UDP_PORT = 2088
 BUFF_SIZE = 2<<10 # 2^10 is size of buffer
 FORMAT = 'utf-8'
 SERVER_PORT = 2088 # our port from shets
-#SERVER_IP = 
+#SERVER_IP =
 BROADCASTIP = "255.255.255.255"
-
 
 class Server:
 
@@ -33,7 +32,6 @@ class Server:
         self.clientList = {}
         self.ip = "127.0.0.1"
 
-
     def up_udp (self, first_time_run, message):
         #print message by the time
         if first_time_run:
@@ -44,15 +42,15 @@ class Server:
 
         serverSocketUdp = socket(AF_INET, SOCK_DGRAM)
         serverSocketUdp.setsockopt(SOL_SOCKET,SO_REUSEADDR,1) # forcing to talk
-        serverSocketUdp.setsockopt(SOL_SOCKET,SO_BROADCAST,1) # open socket for broadcast 
+        serverSocketUdp.setsockopt(SOL_SOCKET,SO_BROADCAST,1) # open socket for broadcast
         serverSocketUdp.bind(('',UDP_PORT)) # bind socket to udp-port
-        
+
         # send the offer messages every sec
         while num_of_connected_clients < 2:
             serverSocketUdp.sendto(message, (BROADCASTIP, UDP_PORT))
-            time.sleep(1) 
-        serverSocketUdp.close()   
-        
+            time.sleep(1)
+        serverSocketUdp.close()
+
 
     def server_connection (self,first_time_run):
 
@@ -74,72 +72,77 @@ class Server:
             print("Success connect to tcp")
             self.clientList[clientSock] = ""
             num_Of_conected_Clients += 1   #TODO maybe sync
-            threading.Thread(target=self.sync_players, args=(clientSock, ip)).start()
-
+            th = threading.Thread(target=self.sync_players, args=(clientSock, ip,serverSocketTcp,num_Of_conected_Clients))
+            th.start()
+            #th.join()
     #  group names,  waiting for 2 groups, creating the game
-    def sync_players(self, client_socket, ip):
+    def sync_players(self, client_socket, ip,serverSocketTcp,num_Of_conected_Clients):
         question, answer = mathProbRand()
         self.qu = question
-        self.ans = answer 
+        self.ans = answer
+        count = 0
         try:
+            print("preper to get name")
             name = client_socket.recv(BUFF_SIZE).decode(FORMAT)
             self.clientList[client_socket] = name
-            print(name)
+            print("welcome " + name)
         except:
             print("Could not receive group name")
             pass
         try:
-             if (num_of_connected_clients == 2):
-                 threading.Event.set()
-                 self.game(client_socket) #TODO 10 sec sleep before game
-             else:
-               threading.Event().wait()
+                print(str(num_Of_conected_Clients))
+                #print("before game")
+                # threading.Event.set()
+                self.game()  # TODO 10 sec sleep before game
+                print("after game")
         except:
              print("Something wrong with client thread")
              pass
 
-    def game(self,clientSock):
-       time.sleep(10)
-       players = self.clientList.values()
-       players = list(players)
-       message = "Welcome to Quick Maths!\n \
-       Player 1: "  + players[0]+ "\n \
-       Player 2: "+players[1]+"\n \
-       Please answer the following question as fast as you can:\n \
-       How much is "+self.qu +"?\n \
-       answer: "
-       clientSock.send(str.encode(message + '\n'))
-       try:
+    def game(self):
+        while len(self.clientList) < 2:
+            continue
+        time.sleep(10)
+        print("ani ba gameeeeeeeeeeeeeeeeeeee")
+        group1soc = list(self.clientList.keys())[0]
+        group2soc = list(self.clientList.keys())[1]
+        group_name1 = list(self.clientList.values())[0]
+        group_name2 = list(self.clientList.values())[1]
+        print("ani ba 111111111")
+        print("ani ba 2222222222")
+        message = "Welcome to Quick Maths.\nPlayer 1: " + group_name1 + "Player 2: " +group_name2 + "\nPlease answer the following question as fast as you can:\nHow much is " + self.qu + "?\nanswer: "
+        print("ani ba 33333333")
+        group1soc.send(str.encode(message + '\n'))
+        group2soc.send(str.encode(message + '\n'))
+        print("ani ba 44444444")
+        try:
             start = time.time()
-            ans = clientSock.recv(BUFF_SIZE).decode(FORMAT)
+            print("ani ba bsartttt")
+            ans1 = group1soc.recv(BUFF_SIZE).decode(FORMAT)
+            print("ani ba ans11")
+            ans2 = group2soc.recv(BUFF_SIZE).decode(FORMAT)
+            print("ani ba ans22")
             end = time.time()
-            if end - start >= 10 :
-                message =  "Game over!\n \
-                The correct answer was : " + self.ans + "\n \
-                The game enden in a draw \n "
-                clientSock.send(str.encode(message))
-                
-            print(ans)
-            if int(ans) == self.ans :
-                message = "Game over!\n \
-                The correct answer was " +str(self.ans) + "!\n \
-                Congratulations to the winner: "+ self.clients[clientSock]+""
-                clientSock.send(str.encode(message + '\n'))
-            elif int(ans) != self.ans :
-                if self.clientList[clientSock] == players[0] : #group name - plyers[1] win
-                    message = "Game over!\n \
-                    The correct answer was " +str(self.ans) + "!\n \
-                    Congratulations to the winner: "+ players[1]+""
-                    clientSock.send(str.encode(message + '\n'))
-                else : 
-                    message = "Game over!\n \
-                    The correct answer was " +str(self.ans) + "!\n \
-                    Congratulations to the winner: "+ players[0]+""
-                    clientSock.send(str.encode(message + '\n'))
-
-       except:
-            print("Could not receive group name")
-            pass
+            print("ani ba 5555555555")
+        except:
+            print("big problem!!!")
+        if end - start >= 10:
+            message = "Game over!\nThe correct answer was : " + self.ans + "\nThe game ended in a draw \n "
+            group1soc.send(str.encode(message))
+            group2soc.send(str.encode(message))
+            print(self.ans)
+        if int(ans1) == self.ans and int(ans2) != self.ans:
+            message = "Game over!\nThe correct answer was " +str(self.ans) + "!\nCongratulations to the winner: "+ self.clients[group1soc]+"" # TODO CHANGE
+            group1soc.send(str.encode(message))
+            group2soc.send(str.encode(message))
+        elif int(ans1) != self.ans and int (ans2) == self.ans:
+            message = "Game over!\nThe correct answer was " +str(self.ans) + "!\nCongratulations to the winner: "+ group_name2+""
+            group1soc.send(str.encode(message))
+            group2soc.send(str.encode(message))
+       # else:
+        #    message =  "Game over!\nThe correct answer was : " + self.ans + "\nThe game ended in a draw \n "
+        #    group1soc.send(str.encode(message))
+        #    group2soc.send(str.encode(message))
 
 
 
@@ -149,26 +152,26 @@ def mathProbRand():
     y = random.randrange(10)
     if x != y :
         if x < y :
-            ans = y - x 
+            ans = y - x
             ansString = "" + str(y) + " + " + str(x)
-            return (ans,ansString)
+            return (ansString, ans)
         else :
             if x+y < 10 :
                 ans = y + x
                 ansString = "" + str(x) + " + "+ str(y)
-                return (ans, ansString)
+                return (ansString, ans)
             else :
-                x = random.randrange(4) 
+                x = random.randrange(4)
                 y = random.randrange(5)
-                ans = y + x 
+                ans = y + x
                 ansString = "" + str(x) + " + " + str(y)
-                return(ans,ansString)
-    else : 
+                return (ansString, ans)
+    else :
             x = random.randrange(3)
-            y = random.randrange(6) 
+            y = random.randrange(6)
             ansString = "" + str(y) + " + " + str(x)
-            ans = y + x 
-            return (ans,ansString)
+            ans = y + x
+            return (ansString,ans)
 
 def mathProb ():
     q = ["0+1","0+2","1+3","1+2","8+1","1+4","5+3","1+5","6+3","7+2","3+3","4+5","5+2", "0+0",
