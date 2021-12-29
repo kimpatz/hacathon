@@ -1,7 +1,9 @@
+from _typeshed import Self
 from socket import * 
 import threading
 import struct
 import time
+import random
 
 #globalandmybechange
 is_our_network = True
@@ -23,6 +25,8 @@ BROADCASTIP = "255.255.255.255"
 class Server:
 
     def __init__ (self):
+        self.ans = 0
+        self.qu = ""
         #   if is_our_network:
         #    self.ip = scapy.all.get_if_addr('eth1')
         #else :
@@ -71,24 +75,67 @@ class Server:
             clientSoc ,ip = serverSocketTcp.accept()
             print("Success connect to tcp") #todo maybe sync
             num_Of_conected_Clients +=1
+            self.clientList[clientSoc] = ""
             threading.Thread(target=self.new_client_socket,args=(clientSoc,ip)).start()
+        serverSocketTcp.close() #stop accept client when 2 already connect
+
          
     def new_client_socket(self, clientsocket, ip):
         try:
              name = clientsocket.recv(BUFF_SIZE).decode(FORMAT)
-              # self.clients[clientsocket] = name
+             self.clients[clientsocket] = name
              print(name)
              if (num_Of_conected_Clients != 2):
                   threading.Event().wait()
-                  qustion, answer = mathProb()
+                  (ans,qu) = mathProbRand()
+                  self.ans = ans 
+                  self.qu = qu
              else:
                   threading.Event().set()
                   self.game(clientsocket)
         except:
              pass
 
+    def game(self,clientSock):
+       time.sleep(10)
+       players = self.clientList.values()
+       players = list(players)
+       message = "Welcome to Quick Maths!\n \
+       Player 1: "  + players[0]+ "\n \
+       Player 2: "+players[1]+"\n \
+       Please answer the following question as fast as you can:\n \
+       How much is "+self.qu +"?\nanswer: "
+       clientSock.send(str.encode(message))
 
 
+
+
+
+def mathProbRand():
+    x = random.randrange(10)
+    y = random.randrange(10)
+    if x != y :
+        if x < y :
+            ans = y - x 
+            ansString = "" + str(y) + " + " + str(x)
+            return (ans,ansString)
+        else :
+            if x+y < 10 :
+                ans = y + x
+                ansString = "" + str(x) + " + "+ str(y)
+                return (ans, ansString)
+            else :
+                x = random.randrange(4) 
+                y = random.randrange(5)
+                ans = y + x 
+                ansString = "" + str(x) + " + " + str(y)
+                return(ans,ansString)
+    else : 
+            x = random.randrange(3)
+            y = random.randrange(6) 
+            ansString = "" + str(y) + " + " + str(x)
+            ans = y + x 
+            return (ans,ansString)
 
 def mathProb ():
     q = ["0+1","0+2","1+3","1+2","8+1","1+4","5+3","1+5","6+3","7+2","3+3","4+5","5+2", "0+0",

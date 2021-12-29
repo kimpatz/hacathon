@@ -19,14 +19,14 @@ class Client:
   
 
     def connection_to_UPD(self):
-        clientSocketUDP = socket(AF_INET, SOCK_DGRAM)
-        clientSocketUDP.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        clientSocketUDP.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
+        clientSocketUDP = socket(AF_INET, SOCK_DGRAM) #open socket udp
+        clientSocketUDP.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1) 
+        clientSocketUDP.setsockopt(SOL_SOCKET, SO_BROADCAST, 1) #brodcasting op
         print("Client started, listening for offer requests...")
-        clientSocketUDP.bind(("", UDP_PORT))
-        self.serverConUDP(clientSocketUDP)
+        clientSocketUDP.bind(("", UDP_PORT)) #bind ip/port
+        self.serverConUDP(clientSocketUDP) #send to connection handler
 
-    def serverConUDP (self,clientSocketUDP):
+    def serverConUDPHandler (self,clientSocketUDP):
         try:
             pack, address = clientSocketUDP.recvfrom(BUFF_SIZE)
             print("Received offer from " + address[0]+", attempting to connect..")
@@ -43,8 +43,8 @@ class Client:
         while True:
             message = clientSocketTCP.recv(BUFF_SIZE)
             print(message.decode(FORMAT))
-            input = keyboard.read_key()
-            clientSocketTCP.send(str.ecnode(input))
+            inputchars = input()
+            clientSocketTCP.send(str.ecnode(inputchars))
 
 
 
