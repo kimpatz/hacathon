@@ -110,7 +110,7 @@ class Server:
        answer: "
        clientSock.send(str.encode(message + '\n'))
        try:
-            ans = client_socket.recv(BUFF_SIZE).decode(FORMAT)
+            ans = clientSock.recv(BUFF_SIZE).decode(FORMAT)
             print(ans)
             if int(ans) == self.ans :
                 None
