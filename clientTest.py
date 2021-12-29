@@ -1,7 +1,6 @@
 from socket import *
 import struct
-
-
+from scapy.all import get_if_addr
 from serverTest import FORMAT
 
 HEADER = 0xabcddcba
@@ -14,7 +13,7 @@ class Client:
     
     def __init__ (self):
         self.connection_to_UPD()
-  
+        self.ip =  get_if_addr('eth2')  
 
     def connection_to_UPD(self):
         clientSocketUDP = socket(AF_INET, SOCK_DGRAM) #open socket udp
@@ -31,7 +30,7 @@ class Client:
             print("Received offer from " + address[0] +  " attempting to connect..")
             message = struct.unpack("IBH", pack)
        #     print("here0")
-            self.connect_to_TCP(('127.0.0.1', message[2]))
+            self.connect_to_TCP((self.ip, message[2]))
         #    print("here3")
         except:
          #   print("error")
