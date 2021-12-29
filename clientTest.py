@@ -24,7 +24,7 @@ class Client:
         clientSocketUDP.setsockopt(SOL_SOCKET, SO_BROADCAST, 1) #brodcasting op
         print("Client started, listening for offer requests...")
         clientSocketUDP.bind(("", UDP_PORT)) #bind ip/port
-        self.serverConUDP(clientSocketUDP) #send to connection handler
+        self.serverConUDPHandler(clientSocketUDP) #send to connection handler
 
     def serverConUDPHandler (self,clientSocketUDP):
         try:

@@ -1,5 +1,4 @@
-from _typeshed import Self
-from socket import * 
+from socket import *
 import threading
 import struct
 import time
@@ -110,12 +109,33 @@ class Server:
        answer: "
        clientSock.send(str.encode(message + '\n'))
        try:
+            start = time.time()
             ans = clientSock.recv(BUFF_SIZE).decode(FORMAT)
+            end = time.time()
+            if end - start >= 10 :
+                message =  "Game over!\n \
+                The correct answer was : " + self.ans + "\n \
+                The game enden in a draw \n "
+                clientSock.send(str.encode(message))
+                
             print(ans)
             if int(ans) == self.ans :
-                None
-            else:
-                None   
+                message = "Game over!\n \
+                The correct answer was " +str(self.ans) + "!\n \
+                Congratulations to the winner: "+ self.clients[clientSock]+""
+                clientSock.send(str.encode(message + '\n'))
+            elif int(ans) != self.ans :
+                if self.clientList[clientSock] == players[0] : #group name - plyers[1] win
+                    message = "Game over!\n \
+                    The correct answer was " +str(self.ans) + "!\n \
+                    Congratulations to the winner: "+ players[1]+""
+                    clientSock.send(str.encode(message + '\n'))
+                else : 
+                    message = "Game over!\n \
+                    The correct answer was " +str(self.ans) + "!\n \
+                    Congratulations to the winner: "+ players[0]+""
+                    clientSock.send(str.encode(message + '\n'))
+
        except:
             print("Could not receive group name")
             pass
