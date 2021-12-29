@@ -28,9 +28,9 @@ class Server:
         self.ans = 0
         self.qu = ""
         if is_our_network:
-            self.ip = all.get_if_addr('eth1')
+            self.ip = get_if_addr('eth1')
         else :
-            self.ip =  all.get_if_addr('eth2')
+            self.ip =  get_if_addr('eth2')
         self.clientList = {}
         #self.ip = "127.0.0.1"
 
