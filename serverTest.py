@@ -78,7 +78,9 @@ class Server:
 
     #  group names,  waiting for 2 groups, creating the game
     def sync_players(self, client_socket, ip):
-        question, answer = mathProb()
+        question, answer = mathProbRand()
+        self.qu = question
+        self.ans = answer 
         try:
             name = client_socket.recv(BUFF_SIZE).decode(FORMAT)
             self.clientList[client_socket] = name
@@ -104,9 +106,19 @@ class Server:
        Player 1: "  + players[0]+ "\n \
        Player 2: "+players[1]+"\n \
        Please answer the following question as fast as you can:\n \
-       How much is "+self.qu +"?\nanswer: "
-       clientSock.send(str.encode(message))
-
+       How much is "+self.qu +"?\n \
+       answer: "
+       clientSock.send(str.encode(message + '\n'))
+       try:
+            ans = client_socket.recv(BUFF_SIZE).decode(FORMAT)
+            print(ans)
+            if int(ans) == self.ans :
+                None
+            else:
+                None   
+       except:
+            print("Could not receive group name")
+            pass
 
 
 
