@@ -12,9 +12,9 @@ team_name = "Desperate Programming Apes"
 class Client:
     
     def __init__ (self):
-        self.ip =  get_if_addr('eth2')  
+       # self.ip =  get_if_addr('eth2')  
         self.connection_to_UPD()
-        
+
     def connection_to_UPD(self):
         clientSocketUDP = socket(AF_INET, SOCK_DGRAM) #open socket udp
         clientSocketUDP.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1) 
