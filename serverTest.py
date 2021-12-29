@@ -3,6 +3,7 @@ import threading
 import struct
 import time
 import random
+import scapy
 from scapy.all import get_if_addr
 
 #globalandmybechange
@@ -27,9 +28,9 @@ class Server:
         self.ans = 0
         self.qu = ""
         if is_our_network:
-            self.ip = scapy.all.get_if_addr('eth1')
+            self.ip = all.get_if_addr('eth1')
         else :
-            self.ip = scapy.all.get_if_addr('eth2')
+            self.ip =  all.get_if_addr('eth2')
         self.clientList = {}
         #self.ip = "127.0.0.1"
 
