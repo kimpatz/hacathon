@@ -3,8 +3,8 @@ import threading
 import struct
 import time
 import random
-import scapy
-from scapy.all import get_if_addr
+#import scapy
+#from scapy.all import get_if_addr
 
 #globalandmybechange
 is_our_network = True
@@ -15,7 +15,7 @@ number_Of_Win_Team = 0
 # const & magic numbers
 HEADER = 0xabcddcba
 MESSAGETYPE = 0x2
-UDP_PORT = 2088
+UDP_PORT = 11457
 BUFF_SIZE = 2<<10 # 2^10 is size of buffer
 FORMAT = 'utf-8'
 SERVER_PORT = 2088 # our port from shets
@@ -27,12 +27,14 @@ class Server:
     def __init__ (self):
         self.ans = 0
         self.qu = ""
-        if is_our_network:
-            self.ip = get_if_addr('eth1')
-        else :
-            self.ip =  get_if_addr('eth2')
+        #if is_our_network:
+        #    self.ip = get_if_addr('eth1')
+        #else :
+        #    self.ip =  get_if_addr('eth2')
         self.clientList = {}
-        #self.ip = "127.0.0.1"
+        self.ip = "127.0.0.1"
+        self.locker = threading.Lock()
+        self.th_pool = []
 
     def up_udp (self, first_time_run, message):
         #print message by the time
@@ -63,7 +65,6 @@ class Server:
 
         #reset num of connected clients
         num_Of_conected_Clients = 0
-
         message = struct.pack("IBH",HEADER,MESSAGETYPE,serverSocketTcpPort)
         threadUDP = threading.Thread(target=self.up_udp, args=(first_time_run, message))
         threadUDP.start()
@@ -76,7 +77,10 @@ class Server:
             num_Of_conected_Clients += 1   #TODO maybe sync
             th = threading.Thread(target=self.sync_players, args=(clientSock, ip,serverSocketTcp,num_Of_conected_Clients))
             th.start()
-            #th.join()
+            self.th_pool.append(th)
+           # for thr in self.th_pool:
+            #    thr.join()
+
     #  group names,  waiting for 2 groups, creating the game
     def sync_players(self, client_socket, ip,serverSocketTcp,num_Of_conected_Clients):
         question, answer = mathProbRand()
@@ -103,7 +107,10 @@ class Server:
 
     def game(self):
         while len(self.clientList) < 2:
+            #self.locker.acquire()
             continue
+        self.locker.release()
+
         time.sleep(10)
         print("ani ba gameeeeeeeeeeeeeeeeeeee")
         group1soc = list(self.clientList.keys())[0]
