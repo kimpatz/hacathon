@@ -37,7 +37,7 @@ class Client:
 
 
     def connect_to_TCP(self,address):
-        clientSocketTCP=socket(AF_INET, SOCK_STREAM)
+        clientSocketTCP = socket(AF_INET, SOCK_STREAM)
         clientSocketTCP.connect((address[0],address[1]))
         clientSocketTCP.send(str.encode(team_name+'\n'))
         while True:
@@ -45,6 +45,8 @@ class Client:
             print(message.decode(FORMAT))
             input = keyboard.read_key()
             clientSocketTCP.send(str.ecnode(input+'\n'))
+        print("Server disconnect, listen for offer requests...")
+        self.connection_to_UPD()
 
 
 

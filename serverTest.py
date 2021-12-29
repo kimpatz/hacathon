@@ -36,10 +36,11 @@ class Server:
 
     def up_udp (self, first_time_run, message):
         #print message by the time
-        #if first_time_run:
-        print("Server started, listening on IP address " + self.ip)
-        #else:
-            #print("Game over, sending out offer requests...") # TODO
+        if first_time_run:
+            print("Server started, listening on IP address " + self.ip)
+        else:
+            print("Game over, sending out offer requests...") # TODO
+            #TODO close server tcp socket
 
         serverSocketUdp = socket(AF_INET, SOCK_DGRAM)
         serverSocketUdp.setsockopt(SOL_SOCKET,SO_REUSEADDR,1) # forcing to talk
