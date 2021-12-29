@@ -30,8 +30,8 @@ class Client:
         try:
             pack, address = clientSocketUDP.recvfrom(BUFF_SIZE)
             print("Received offer from " + address[0]+", attempting to connect..")
-            message = struct.unpack("IBH",pack)
-            self.connect_to_TCP(('127.0.0.1',message[2]))
+            message = struct.unpack("IBH", pack)
+            self.connect_to_TCP(('127.0.0.1', message[2]))
         except:
             pass
 
@@ -39,12 +39,12 @@ class Client:
     def connect_to_TCP(self,address):
         clientSocketTCP=socket(AF_INET, SOCK_STREAM)
         clientSocketTCP.connect((address[0],address[1]))
-        clientSocketTCP.send(str.encode(team_name))
+        clientSocketTCP.send(str.encode(team_name+'\n'))
         while True:
             message = clientSocketTCP.recv(BUFF_SIZE)
             print(message.decode(FORMAT))
-            inputchars = input()
-            clientSocketTCP.send(str.ecnode(inputchars))
+            input = keyboard.read_key()
+            clientSocketTCP.send(str.ecnode(input+'\n'))
 
 
 
